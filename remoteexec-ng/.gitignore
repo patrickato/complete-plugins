@@ -1,0 +1,11 @@
+# Test / build artifacts
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Local state the tools make on-device (never committed)
+*.bak
+*.bak.*
+auth_token.txt
+audit.log
+fleet.json
