@@ -18,6 +18,7 @@ todo() { echo "  [TODO] $1"; [ -z "$NEXT" ] && NEXT="$2"; }
 info() { echo "         $1"; }
 
 echo "===== BadHID doctor ====="
+echo "  (tip: 'sudo ./badhid_setup.sh' can just do all of the below for you)"
 
 # 1. board
 MODEL="$(cat /proc/device-tree/model 2>/dev/null | tr -d '\0')"; MODEL="${MODEL:-unknown}"
@@ -53,7 +54,7 @@ fi
 if [ -f "$PLUGINS_DIR/badhid_ng.py" ]; then
   ok "plugin installed: $PLUGINS_DIR/badhid_ng.py"
 else
-  todo "plugin not installed" "sudo sh install.sh"
+  todo "plugin not installed" "sudo ./badhid_install.sh"
 fi
 
 # 5. config block + token
@@ -66,7 +67,7 @@ if grep -q '^\[main\.plugins\.badhid_ng\]' "$CONFIG" 2>/dev/null; then
   if [ "$EN" = "enabled=true" ]; then ok "plugin enabled"
   else todo "plugin not enabled yet (enabled=false)" "set enabled = true in $CONFIG, then: sudo systemctl restart pwnagotchi"; fi
 else
-  todo "no config block" "sudo sh install.sh"
+  todo "no config block" "sudo ./badhid_install.sh"
 fi
 
 # 6. control server reachable (only meaningful if enabled)

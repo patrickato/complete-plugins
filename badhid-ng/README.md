@@ -5,8 +5,19 @@ Turn a gadget-capable Raspberry Pi into a **USB keyboard** that types a payload
 and an on-screen status. A "BadUSB / BadHID" lab tool for Jayofelony Pwnagotchi,
 for testing against **hardware you own or are authorized to test**.
 
-New to this? Read **"How it works in one minute"**, then **Install**, then follow
-the printed steps. `badhid_doctor.sh` holds your hand the whole way.
+New to this and just want it to work? Install the files, then run **one
+command**:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/patrickato/complete-plugins/main/badhid-ng/install.sh | sudo sh
+sudo /etc/pwnagotchi/badhid_ng/badhid_setup.sh
+```
+
+The wizard (`badhid_setup.sh`) does the whole setup for you — board check, USB
+gadget mode, keyboard, enabling the plugin, phone access — in plain language,
+asking before anything risky, and safe to re-run after the one reboot it needs.
+Everything below is the same steps by hand, plus reference. If you ever get
+stuck, `sudo ./badhid_doctor.sh` tells you the one next thing to do.
 
 ---
 
@@ -37,7 +48,7 @@ payloads. You write your own, for your own gear.
 
 ---
 
-## Install
+## Install — by hand (the wizard above does all of this for you)
 
 Everything runs on the Pi, and you stay reachable over ethernet/Wi-Fi the whole
 time, so you can't lock yourself out.
@@ -65,12 +76,20 @@ sudo ./badhid_doctor.sh                        # should be green except "enable 
 
 **3. Enable the plugin:** open `/etc/pwnagotchi/config.toml`, find
 `[main.plugins.badhid_ng]`, set `enabled = true`, then
-`sudo systemctl restart pwnagotchi`.
+`sudo systemctl restart pwnagotchi`. Don't want to hand-edit TOML? Use the safe
+setter (it only touches badhid's block):
+```bash
+sudo python3 badhid_setopt.py /etc/pwnagotchi/config.toml enabled true
+sudo systemctl restart pwnagotchi
+```
 
 **4. Fire a harmless demo** at the machine the Pi is plugged into:
 ```bash
 sudo ./badhidctl.sh arm && sudo ./badhidctl.sh fire hello_world.duck
 ```
+Prefer your phone? **`sudo ./badhid_phone.sh`** shows a QR code that opens the
+control page with the token already in it (add `--fix` if it says the page isn't
+phone-reachable yet).
 
 At any point, **`sudo ./badhid_doctor.sh`** prints exactly what to do next. To
 update later, re-run the installer (or, from a clone, `sudo ./badhid_update.sh`).
@@ -89,6 +108,9 @@ All live in `/etc/pwnagotchi/badhid_ng/` after install.
 | Script | What it does | Reversible? |
 |---|---|---|
 | `install.sh` / `uninstall.sh` | Install (plugin + payloads + tools + config) / remove (`--purge` also removes config + home dir) | `uninstall.sh` |
+| `badhid_setup.sh` | **The guided wizard.** Does the whole setup for you, step by step, in plain language; asks before anything risky; safe to re-run after the reboot | each step it runs is reversible (below) |
+| `badhid_phone.sh` | Phone one-tap URL + scannable **QR code**; `--fix` makes the page phone-reachable and restarts | sets bind_scope back with `badhid_setopt.py` |
+| `badhid_setopt.py` | Safely set **one** option inside the `[main.plugins.badhid_ng]` block only (no hand-editing TOML); refuses if the result wouldn't parse | edit again / `uninstall.sh` |
 | `badhid_doctor.sh` | **Read-only** health check of the whole chain; prints the one next step | n/a |
 | `badhid_update.sh` | From a clone, after a `git pull`: copy the updated plugin + payloads into place and restart | n/a |
 | `enable_dwc2.sh` | Put the USB port in gadget mode (`dr_mode=otg`); board-aware; **needs reboot** | `enable_dwc2.sh --revert` |

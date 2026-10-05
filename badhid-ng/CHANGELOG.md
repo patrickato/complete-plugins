@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.2.0
+
+Ease-of-use pass — making it "just work" for someone brand new to it.
+
+- **`badhid_setup.sh` — a guided wizard.** One command walks from nothing to a
+  fireable setup: checks the board, turns on USB gadget mode, brings up the
+  keyboard, enables the plugin, offers phone access, and prints how to fire — in
+  plain language, asking before anything risky, and safe to re-run after the one
+  reboot it needs. Non-interactive runs take the safe defaults (enable the
+  plugin, but never expose the control page to the LAN without a yes).
+- **`badhid_phone.sh` — phone access in one scan.** Prints the one-tap control
+  URL (token already in it) and a scannable QR code (via `qrencode`, falling
+  back to Python `qrcode`, then to the plain URL). `--fix` makes the page
+  phone-reachable (`bind_scope=lan`) and restarts. Warns clearly when the
+  current `bind_scope` isn't reachable from a phone.
+- **`badhid_setopt.py` — no more hand-editing TOML.** Safely sets one option
+  inside the `[main.plugins.badhid_ng]` block *only* (section-anchored so a
+  neighbouring plugin's identically-named key is never touched, and a mention of
+  the section in a comment is never mistaken for the block), and refuses to write
+  if the result wouldn't parse. Used by the wizard; handy on its own.
+- `badhid_doctor.sh` now points newcomers at the wizard.
+- Tests: `tests/test_setup_helpers.py` covers the section-scoped setter
+  (isolation, in-place update, append-when-missing, comment-mention guard) and
+  shells out to the two scripts (URL building, reachability warning, and the
+  wizard's safe non-interactive default).
+
+No change to the plugin's firing behaviour, safety model, or payloads.
+
 ## 0.1.0
 
 First release. A USB HID keystroke-injection ("BadUSB / BadHID") framework for
