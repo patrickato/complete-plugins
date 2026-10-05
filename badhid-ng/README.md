@@ -169,6 +169,16 @@ exposed address, so pick one:
 
 **4. Bookmark it** to your phone's home screen for a true one-tap launcher.
 
+**Use the dedicated server (port 8083), not the pwnagotchi web UI (8080).** The
+plugin also appears under pwnagotchi's own web UI at
+`http://<pi>:8080/plugins/badhid_ng/`, and the page will *load* there — but
+pwnagotchi wraps that server in CSRF protection, so the ARM/FIRE **buttons**
+fail there with `400 Bad Request: The CSRF token is missing`. The dedicated
+control server on **port 8083** (`bind_scope`) has no CSRF wrapper and is what
+the one-tap page is built for — set `bind_scope = "lan"` (or `tailscale`) and use
+the `:8083` URL above. The `:8080` mount is fine for a quick read-only glance
+only.
+
 **Options & notes:**
    - `allow_quickfire = true` (default): one tap = arm **+** fire. Set it
      `false` to force the two-step (ARM first, then each FIRE needs you armed).
@@ -286,6 +296,7 @@ Run **`sudo ./badhid_doctor.sh`** first — it pinpoints the broken link. Common
 | `Win+R → notepad` fails with a missing-DLL error (e.g. `Microsoft.UI.Windowing.Core.dll`) but Notepad opens fine from the Start menu | some Win11 installs have a broken `notepad.exe` redirect — launching the Store Notepad via its exe bypasses app activation, so it can't find its runtime DLLs | not a BadHID issue. On that PC: Settings → Apps → Advanced app settings → **App execution aliases** → toggle **Notepad** off then on. Or just open Notepad yourself and fire a type-only payload (open the editor, focus it, fire `hello_world.duck` from your phone so focus isn't stolen). Other PCs are unaffected. |
 | wrong symbols typed | non-US keyboard layout on the target | US layout only for now |
 | lost `usb0` after the gadget came up | expected if you used composite on an ethernet-managed Pi | you manage over ethernet; or `--teardown`, or reboot |
+| the phone page loads but ARM/FIRE give `400 Bad Request: The CSRF token is missing` | you opened it via the pwnagotchi web UI (`:8080/plugins/badhid_ng/`), whose CSRF guard blocks the POSTs | use the dedicated control server instead: `bind_scope = "lan"` (or `tailscale`), restart, then open `http://<pi>:8083/?token=...`. The `:8080` mount is read-only. |
 | want it all gone | — | `sudo ./badhid_restore.sh` (add `--reboot` to fully clear the gadget) |
 
 ---
