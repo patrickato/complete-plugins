@@ -127,6 +127,8 @@ else
     printf 'max_actions = 20000\n'
     printf 'write_timeout_seconds = 10\n'
     printf 'allow_quickfire = true\n'
+    printf '# B3: let the fleet controller stage payloads here (path-safe, parse-validated).\n'
+    printf 'allow_remote_stage = true\n'
     printf 'ui_enabled = true\n'
     printf 'ui_position_x = -55\n'
     printf 'ui_position_y = 10\n'

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0
+
+- **B3 complete: the `POST /stage` endpoint.** BadHID now accepts a
+  token-authenticated payload upload from the fleet controller
+  (`fleetctl.py badhid-stage`), so staging a payload on a remote enrolled device
+  works end to end alongside the existing `/fire`. The upload is **path-safe**
+  (stays inside `payloads_dir`, `.duck`/`.txt` only), **parse-validated** before
+  it's written (a payload that won't parse is rejected, not saved), and gated by
+  the new `allow_remote_stage` option (default `true`; set `false` to refuse all
+  remote staging). Unit-tested: valid write, path-traversal rejected, wrong
+  extension rejected, unparseable rejected, empty rejected, and
+  `allow_remote_stage=false` → 403. The installer and `config.toml.example` now
+  include the option. (This is the device-side piece of B3; the controller side
+  — `badhid-stage`/`badhid-fire` — already shipped in RemoteExec NG.)
+
 ## 0.2.1
 
 - **`badhid_phone.sh` QR always shows.** When no QR tool is present, the script

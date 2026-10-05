@@ -120,6 +120,13 @@ write_timeout_seconds = 10
 # false to force the deliberate two-step arm-then-fire on the web UI too.
 allow_quickfire = true
 
+# Allow a token-authenticated client (the fleet controller, B3) to upload a
+# payload to payloads_dir via POST /stage. The upload is path-safe (payloads_dir
+# only, .duck/.txt) and parse-validated before it's written. This is what makes
+# `fleetctl.py badhid-stage` work against this device. Set false to refuse all
+# remote staging (payloads then only arrive via the pi's own filesystem).
+allow_remote_stage = true
+
 # ---------------------------------------------------------------------
 # On-screen status (optional; monochrome-safe for the TFT)
 # ---------------------------------------------------------------------

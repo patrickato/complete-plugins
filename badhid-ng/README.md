@@ -214,6 +214,22 @@ only.
 With `ui_enabled = true` a small **`BadHID`** indicator shows on the TFT:
 `off` → `ready` (gadget up) → `ARMED` (live) → `no-dev` (gadget not up).
 
+### Across a fleet (B3 — drive it from the fleet controller)
+With [RemoteExec NG + `fleetctl`](../remoteexec-ng) you can stage and fire payloads
+on a BadHID device you've enrolled, from one place. BadHID exposes a token-gated
+**`POST /stage`** endpoint (path-safe to `payloads_dir`, `.duck`/`.txt` only, and
+**parse-validated** before it's written) that `fleetctl badhid-stage` uploads to;
+`fleetctl badhid-fire` then triggers `/fire`:
+```bash
+# enroll the agent with its BadHID endpoint, then:
+python3 fleetctl.py badhid-stage pi-a ./mypayload.duck --as demo.duck
+python3 fleetctl.py badhid-fire  pi-a demo.duck --target "my lab box"
+```
+`badhid-fire` requires you to type `yes` — a USB keyboard can't verify which
+machine it's plugged into. Remote staging is **on by default** but gated by the
+token; set `allow_remote_stage = false` to refuse it entirely (payloads then only
+arrive via the pi's own filesystem).
+
 ---
 
 ## Ways to run it (pick what fits)
