@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1
+
+- **`badhid_phone.sh` QR always shows.** When no QR tool is present, the script
+  now installs a real, tested encoder once (`qrencode` via apt, falling back to
+  the `qrcode` Python package via pip) instead of just printing an install hint
+  — so a fresh Pi still gets a scannable code with no manual step. Add
+  `--no-install` to skip that and only print the URL. (Found when a fresh Pi
+  showed the URL but no QR because `qrencode` wasn't installed yet.)
+
 ## 0.2.0
 
 Ease-of-use pass — making it "just work" for someone brand new to it.

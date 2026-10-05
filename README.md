@@ -9,7 +9,7 @@ Each plugin lives in its own folder with its own README, installer and tests.
 | Plugin | What it does | Status |
 |---|---|---|
 | [**tweak-view-ng**](tweak-view-ng/) | Safe, resolution-independent UI layout editor — drag, nudge, align and restyle your Pwnagotchi's screen from a browser, with named layout profiles. | 0.2.0-beta1 |
-| [**badhid-ng**](badhid-ng/) | USB HID keystroke-injection ("BadUSB") lab tool for hardware you own — DuckyScript-subset runner, board-aware gadget setup, arm/auth/logging, one-tap phone page + QR, guided wizard, 20 harmless demos. | 0.2.0 |
+| [**badhid-ng**](badhid-ng/) | USB HID keystroke-injection ("BadUSB") lab tool for hardware you own — DuckyScript-subset runner, board-aware gadget setup, arm/auth/logging, one-tap phone page + QR (auto-shows on a fresh Pi), guided wizard, 20 harmless demos. | 0.2.1 |
 | [**remoteexec-ng**](remoteexec-ng/) | Token-gated remote-exec agent (safe-by-default, tasks-mode) + a stdlib fleet controller that fans commands out across Pis you own and can stage/fire BadHID across the fleet. | 0.1.0 |
 
 ## Installing a plugin
