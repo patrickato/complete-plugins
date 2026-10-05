@@ -1,0 +1,94 @@
+# ============================================================================
+# NetManager NG - reference config block.
+#
+# The installer writes this block into your /etc/pwnagotchi/config.toml for you
+# (with a generated token). This file is here so you can SEE every option and,
+# if you prefer a manual install, copy the block in yourself.
+#
+# Section name is [main.plugins.netmanager_ng], matching the plugin FILE's
+# basename (netmanager_ng.py). This fork's loader does NOT merge __defaults__,
+# so every option is spelled out.
+#
+# >>> LINES MARKED "USER INPUT" ARE THE ONLY THINGS YOU NEED TO TOUCH. <<<
+# ============================================================================
+
+[main.plugins.netmanager_ng]
+
+# Turn the page on. Ships false so nothing serves until you're ready.
+enabled = false
+
+# ----------------------------------------------------------------------------
+# >>> USER INPUT REQUIRED <<<  (the installer fills this in for you)
+# ----------------------------------------------------------------------------
+# A long random token. The page is useless without it and the server REFUSES to
+# start if it's blank / a placeholder / under 12 chars. Generate one with:
+#     python3 -c "import secrets; print(secrets.token_urlsafe(24))"
+auth_token = ""
+
+# How exposed the page is. "auto" = Tailscale IP if present else localhost;
+# "tailscale" = Tailscale only (refuse if it's not up); "localhost"; or "lan" =
+# 0.0.0.0, reachable by anything on your LAN that has the token (explicit, broad
+# - use only on a network you trust). The exact bound URL is always logged.
+# >>> USER INPUT: set "lan" to reach it from your phone on a home network. <<<
+bind_scope = "auto"
+port = 8085
+
+# Where your network list is stored (0600 - it can hold fleet tokens).
+store_path = "/etc/pwnagotchi/netmanager_ng/networks.json"
+
+# Per-fire network timeout in seconds (e.g. the fleet reachability probe).
+fire_timeout_seconds = 10
+
+# Bulk-import sources, so you never hand-type 50 networks. Import is additive +
+# deduped (safe to re-run). Defaults match a stock Jayofelony image; change only
+# if yours differ (the handshakes dir is auto-detected if this path is missing).
+handshakes_dir = "/etc/pwnagotchi/handshakes"
+fleet_json_path = "/home/pi/.config/fleetctl/fleet.json"
+
+# ----------------------------------------------------------------------------
+# THE GATE (non-negotiable safety rule): a wifi_target "Fire Test" is REFUSED
+# unless the target's BSSID or SSID is listed here. EMPTY by default - nothing
+# can be fired at. ONLY add networks you OWN or are AUTHORIZED to test.
+#
+# >>> USER INPUT: authorize with ONE command instead of editing this by hand:
+#       sudo /etc/pwnagotchi/netmanager_ng/netmanagerctl.sh authorize <BSSID|SSID>
+# ----------------------------------------------------------------------------
+authorized_targets = []
+
+# ============================================================================
+# OPTIONAL CAPTURE BACKEND - the authorized-path "real test". OFF by default.
+# This is a SECOND switch ON TOP of the allowlist above: even for an authorized
+# target, nothing is captured/sent unless BOTH capture_backend_enabled=true AND
+# capture_iface names a SECOND adapter (never the pwnagotchi radio). It runs
+# standard tools (airodump-ng capture locked to the one authorized BSSID + an
+# optional bounded, targeted aireplay-ng deauth) and drops the handshake into
+# your handshakes dir. ONLY for networks you own or are authorized to test.
+#
+#   Requirements: a 2nd monitor-mode USB adapter + aircrack-ng installed.
+#   Find the adapter:  sudo /etc/pwnagotchi/netmanager_ng/netmanager_wifi_probe.sh
+# ============================================================================
+capture_backend_enabled = false
+
+# >>> USER INPUT (only when you enable the backend): the SECOND adapter to
+# capture on - NEVER the pwnagotchi radio (wlan0 / wlan0mon). Run the probe
+# above to find a monitor-capable one (e.g. "wlan1").
+capture_iface = ""
+
+# How long airodump captures, in seconds.
+capture_seconds = 25
+
+# 0 = PASSIVE capture only (sends NOTHING). >0 = a bounded, targeted deauth to
+# coax a handshake; hard-capped at 64 (a capture nudge, never a flood).
+# >>> USER INPUT: start at 0; raise it only against targets you're allowed to. <<<
+deauth_count = 0
+
+# Where the .pcapng/.cap lands (empty -> handshakes_dir above).
+capture_out_dir = ""
+
+# Interfaces the backend will REFUSE to use (the pwnagotchi/bettercap radio).
+builtin_ifaces = ["wlan0", "wlan0mon", "mon0"]
+
+# On-screen status on the TFT (shows the network count). Optional.
+ui_enabled = true
+ui_position_x = -40
+ui_position_y = 30
